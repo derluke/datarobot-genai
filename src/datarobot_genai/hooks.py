@@ -13,6 +13,8 @@ from kedro.framework.context import KedroContext
 from kedro.framework.hooks import hook_impl
 from kedro.framework.project import settings
 
+log = logging.getLogger(__name__)
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -29,9 +31,7 @@ class DataRobotHook:
         conf_loader = OmegaConfigLoader(conf_source=conf_path, env="local")
         credentials = conf_loader["credentials"]["datarobot"]
 
-        logging.info(
-            f"Initializing DataRobot client on endpoint {credentials['endpoint']}"
-        )
+        log.info(f"Initializing DataRobot client on endpoint {credentials['endpoint']}")
         _ = dr.Client(
             token=credentials["token"],
             endpoint=credentials["endpoint"],
@@ -42,6 +42,23 @@ class DataRobotHook:
             endpoint=credentials["endpoint"],
             pred_server_id=dr.PredictionServer.list()[0].id,
         )
+
+        cohere_credentials = conf_loader["credentials"]["cohere"]
+        client = dr.client.get_client()
+        try:
+            res = client.post(
+                "credentials",
+                json={
+                    "name": "cohere_api_token",
+                    "description": "Added from kedro hook",
+                    "credentialType": "api_token",
+                    "apiToken": cohere_credentials["token"],
+                },
+            )
+            if res.status_code == 201:
+                log.info("Cohere credentials added to DataRobot")
+        except:
+            log.info("Cohere credentials already added to DataRobot")
 
 
 class PDBPipelineDebugHook:
