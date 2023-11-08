@@ -1,3 +1,4 @@
+# typing: ignore
 import concurrent.futures
 import logging
 
@@ -282,7 +283,8 @@ def create_ice_plots(model: dr.Model, training_data: pd.DataFrame) -> dict[str, 
         Returns:
             List of ICE plots.
     """
-
+    if model.project_id is None:
+        raise ValueError("Model is not associated with a project.")
     project = dr.Project.get(model.project_id)
     assert isinstance(project, dr.Project)
 

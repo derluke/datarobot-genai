@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-
+# type: ignore
+# pylint: disable=import-error
 
 # datarobot_genai documentation build
 # configuration file, created by sphinx-quickstart.

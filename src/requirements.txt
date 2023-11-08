@@ -19,5 +19,6 @@ matplotlib~=3.7.2
 kedro-datasets[pickle.PickleDataset]~=1.8.0
 kedro-viz~=6.6.1
 datarobotx[deploy]~=0.1.19
+seaborn~=0.13.0
 # cohere==4.27
 # datarobot-drum==1.10.10

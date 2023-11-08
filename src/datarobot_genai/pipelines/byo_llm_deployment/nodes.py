@@ -12,7 +12,29 @@ import pandas as pd
 log = logging.getLogger(__name__)
 
 
-def deploy_custom_llm(custom_py: str):
+def set_credentials(cohere_credentials: dict) -> bool:
+    client = dr.client.get_client()
+    try:
+        res = client.post(
+            "credentials",
+            json={
+                "name": "cohere_api_token",
+                "description": "Added from kedro hook",
+                "credentialType": "api_token",
+                "apiToken": cohere_credentials["token"],
+            },
+        )
+        if res.status_code == 201:
+            log.info("Cohere credentials added to DataRobot")
+    except Exception:  # pylint: disable=bare-except
+        log.info("Cohere credentials already added to DataRobot")
+
+    return True
+
+
+def deploy_custom_llm(custom_py: str, credentials_set: bool) -> drx.Deployment:
+    if not credentials_set:
+        raise RuntimeError("Cohere credentials not set")
     cwd = os.getcwd()
 
     with tempfile.TemporaryDirectory() as tmpdirname:

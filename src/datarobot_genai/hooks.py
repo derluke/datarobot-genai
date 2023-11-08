@@ -43,23 +43,6 @@ class DataRobotHook:
             pred_server_id=dr.PredictionServer.list()[0].id,
         )
 
-        cohere_credentials = conf_loader["credentials"]["cohere"]
-        client = dr.client.get_client()
-        try:
-            res = client.post(
-                "credentials",
-                json={
-                    "name": "cohere_api_token",
-                    "description": "Added from kedro hook",
-                    "credentialType": "api_token",
-                    "apiToken": cohere_credentials["token"],
-                },
-            )
-            if res.status_code == 201:
-                log.info("Cohere credentials added to DataRobot")
-        except:
-            log.info("Cohere credentials already added to DataRobot")
-
 
 class PDBPipelineDebugHook:
     """A hook class for creating a post mortem debugging with the PDB debugger

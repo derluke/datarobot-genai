@@ -1,5 +1,6 @@
 from kedro.pipeline import Pipeline, node
 from .nodes import (
+    set_credentials,
     deploy_custom_llm,
     predict,
     validate_llm_deployment,
@@ -11,8 +12,14 @@ def create_pipeline() -> Pipeline:
     return Pipeline(
         [
             node(
+                func=set_credentials,
+                inputs=["cohere_credentials"],
+                outputs="credentials_set",
+                name="set_credentials",
+            ),
+            node(
                 func=deploy_custom_llm,
-                inputs=["custom_py"],
+                inputs=["custom_py", "credentials_set"],
                 outputs="byo_llm_deployment",
                 name="deploy_custom_llm",
             ),
