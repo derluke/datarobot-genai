@@ -1,0 +1,13 @@
+# This is a boilerplate parameters config generated for pipeline 'create_usecase'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+
+genai_api_root: https://staging.datarobot.com/api-gw/genai
+
+pre_baked_llm_blueprint:
+  name: "Pre-baked LLM Blueprint"
+  llmId: "azure-openai-gpt-3.5-turbo"
+
+prompt_text: "Why is DataRobot so much better with kedro?"

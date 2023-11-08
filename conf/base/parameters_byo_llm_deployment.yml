@@ -1,0 +1,8 @@
+# This is a boilerplate parameters config generated for pipeline 'byo_llm_deployment'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+
+blueprint_name: "Created from Kedro Pipeline"
+system_prompt: "Talk like a DataRobot employee that really likes kedro a lot"

@@ -1,0 +1,23 @@
+black~=22.0
+flake8>=3.7.9, <5.0
+ipython>=7.31.1, <8.0; python_version < '3.8'
+ipython~=8.10; python_version >= '3.8'
+isort~=5.0
+jupyter~=1.0
+jupyterlab_server>=2.11.1, <2.16.0
+jupyterlab~=3.0, <3.6.0
+kedro~=0.18.13
+kedro-telemetry~=0.2.0
+nbstripout~=0.4
+pytest-cov~=3.0
+pytest-mock>=1.7.1, <2.0
+pytest~=7.2
+datarobot~=3.2
+numpy~=1.26.0
+pandas<=2.0.3
+matplotlib~=3.7.2
+kedro-datasets[pickle.PickleDataset]~=1.8.0
+kedro-viz~=6.6.1
+datarobotx[deploy]~=0.1.19
+# cohere==4.27
+# datarobot-drum==1.10.10
