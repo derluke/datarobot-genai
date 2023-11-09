@@ -20,8 +20,8 @@ vector_database:
   filepath: data/02_intermediate/vector_database.pkl
 
 vector_database_settings:
-  type: yaml.YAMLDataSet
-  filepath: data/02_intermediate/vector_database_settings.yml
+  type: pickle.PickleDataset
+  filepath: data/02_intermediate/vector_database_settings.pkl
 
 use_case:
   type: pickle.PickleDataset

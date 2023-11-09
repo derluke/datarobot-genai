@@ -12,7 +12,7 @@ from .nodes import (
 )
 
 
-def create_pipeline(**kwargs) -> Pipeline:
+def create_pipeline() -> Pipeline:
     return Pipeline(
         [
             node(
