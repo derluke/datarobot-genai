@@ -1,0 +1,19 @@
+# This is a boilerplate parameters config generated for pipeline 'add_llm_to_usecase'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+
+system_prompt: "Talk like a DataRobot employee that really likes kedro a lot"
+
+pre_baked_llm_blueprint:
+  name: "Pre-baked LLM Blueprint"
+  id: "azure-openai-gpt-3.5-turbo"
+
+byo_llm_blueprint:
+  name: "Created from Kedro Pipeline"
+
+vector_database_settings:
+  max_documents_retrieved_per_prompt: 2
+  batch_size: 32
+  max_tokens: 128

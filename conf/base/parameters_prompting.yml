@@ -1,6 +1,7 @@
-# This is a boilerplate parameters config generated for pipeline 'create_usecase'
+# This is a boilerplate parameters config generated for pipeline 'prompting'
 # using Kedro 0.18.14.
 #
 # Documentation for this file format can be found in "Parameters"
 # Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
 
+prompt_text: "How would you best set up your data science work flow?"

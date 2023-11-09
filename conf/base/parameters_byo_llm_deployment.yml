@@ -4,5 +4,6 @@
 # Documentation for this file format can be found in "Parameters"
 # Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
 
-blueprint_name: "Created from Kedro Pipeline"
-system_prompt: "Talk like a DataRobot employee that really likes kedro a lot"
+byo_llm_deployment:
+  genai_api_root: https://staging.datarobot.com/api-gw/genai
+  prompt_text: "How would you best set up your data science work flow?"
