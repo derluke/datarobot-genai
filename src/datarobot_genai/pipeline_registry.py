@@ -13,5 +13,4 @@ def register_pipelines() -> dict[str, Pipeline]:
     """
     pipelines = find_pipelines()
     pipelines["__default__"] = sum(pipelines.values(), Pipeline([]))
-    pipelines["byo_llm_deployment"] = pipelines["byo_llm_deployment"]
     return pipelines

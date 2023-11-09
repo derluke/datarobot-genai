@@ -1,15 +1,15 @@
 from kedro.pipeline import Pipeline, node
+from kedro.pipeline.modular_pipeline import pipeline
 from .nodes import (
     set_credentials,
     deploy_custom_llm,
     predict,
     validate_llm_deployment,
-    add_to_playground,
 )
 
 
 def create_pipeline() -> Pipeline:
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=set_credentials,
@@ -26,26 +26,17 @@ def create_pipeline() -> Pipeline:
             node(
                 func=predict,
                 inputs=["byo_llm_deployment", "params:prompt_text"],
-                outputs="byo_llm_response",
+                outputs="byo_llm_deployment_response",
                 name="predict",
             ),
             node(
                 func=validate_llm_deployment,
-                inputs=["byo_llm_deployment", "params:genai_api_root"],
-                outputs="validation_id",
+                inputs=["byo_llm_deployment"],
+                outputs="custom_model_validation",
                 name="validate_llm_deployment",
             ),
-            node(
-                func=add_to_playground,
-                inputs=[
-                    "playground",
-                    "validation_id",
-                    "params:genai_api_root",
-                    "params:blueprint_name",
-                    "params:system_prompt",
-                ],
-                outputs=None,
-                name="add_to_playground",
-            ),
-        ]
+        ],
+        namespace="byo_llm_deployment",
+        inputs={"cohere_credentials", "custom_py"},
+        outputs="custom_model_validation",
     )

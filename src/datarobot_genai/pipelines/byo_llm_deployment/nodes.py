@@ -1,6 +1,5 @@
 import os
 import tempfile
-import time
 import logging
 
 
@@ -8,6 +7,13 @@ import logging
 import datarobot as dr
 import datarobotx as drx
 import pandas as pd
+from datarobot._experimental.models.genai.custom_model_llm_validation import (
+    CustomModelLLMValidation,
+)
+from datarobot._experimental.models.genai.custom_model_validation import (
+    CustomModelValidation,
+)
+
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +32,7 @@ def set_credentials(cohere_credentials: dict) -> bool:
         )
         if res.status_code == 201:
             log.info("Cohere credentials added to DataRobot")
-    except Exception:  # pylint: disable=bare-except
+    except Exception:  # pylint: disable=broad-exception-caught
         log.info("Cohere credentials already added to DataRobot")
 
     return True
@@ -65,73 +71,14 @@ def predict(deployment: drx.Deployment, prompt: str) -> str:
     return prediction["prediction"][0]
 
 
-def validate_llm_deployment(deployment: drx.Deployment, genai_api_root: str) -> dict:
-    validation_payload = {
-        "promptColumnName": "promptText",
-        "targetColumnName": "resultText",
-        "deploymentId": deployment.dr_deployment.id,
-    }
+def validate_llm_deployment(deployment: drx.Deployment) -> CustomModelValidation:
 
-    client = dr.client.get_client()
-    response = client.post(
-        f"{genai_api_root}/customModelLLMValidations/", json=validation_payload
+    custom_model_llm_validation = CustomModelLLMValidation.create(
+        prompt_column_name="promptText",
+        target_column_name="resultText",
+        deployment_id=deployment.dr_deployment.id,
+        wait_for_completion=True,
     )
-    status_tracking_url = response.headers.get("Location")
-    if not status_tracking_url:
-        raise RuntimeError("Failed to get status tracking URL")
+    assert custom_model_llm_validation.validation_status == "PASSED"
 
-    print(f"Response: {response.status_code}")
-    print(f"Status tracking URL: {status_tracking_url}")
-    validation_id = None
-
-    # Waiting timeout = 60 seconds
-    for _ in range(60):
-        status_response = client.get(status_tracking_url, allow_redirects=False)
-
-        if status_response.status_code == 303:
-            validation_id = response.json()["id"]
-            validation = client.get(
-                f"{genai_api_root}/customModelLLMValidations/{validation_id}/"
-            ).json()
-            validation_status = validation["validationStatus"]
-
-            if validation_status == "PASSED":
-                print(f"Successful validation ID: {validation['id']}")
-                break
-            else:
-                raise RuntimeError(
-                    f"Expected a successful validation, got: {validation_status}"
-                )
-
-        time.sleep(1)
-
-    if not validation_id:
-        raise RuntimeError("Timed out waiting for custom model validation to succeed")
-
-    return {"validation_id": validation_id}
-
-
-def add_to_playground(
-    playground: dict,
-    validation_id: dict,
-    genai_api_root: str,
-    blueprint_name: str,
-    system_prompt: str,
-) -> None:
-    llm_blueprint_payload = {
-        "name": blueprint_name,
-        "playgroundId": playground["id"],
-        "llmId": "custom-model",
-        # Uncomment this if you'd like to use a vector database
-        # "vectorDatabaseId": "abcdef0123456789",
-        "llmSettings": {
-            "systemPrompt": system_prompt,
-            "validationId": validation_id["validation_id"],
-        },
-    }
-    client = dr.client.get_client()
-    response = client.post(
-        f"{genai_api_root}/llmBlueprints/", json=llm_blueprint_payload
-    )
-    llm_blueprint = response.json()
-    log.info(f"LLM Blueprint: {llm_blueprint}")
+    return custom_model_llm_validation

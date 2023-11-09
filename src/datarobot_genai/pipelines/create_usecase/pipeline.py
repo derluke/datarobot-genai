@@ -7,37 +7,37 @@ from kedro.pipeline import Pipeline, node
 from .nodes import (
     create_usecase_object,
     create_playground,
-    create_draft_blueprint,
-    submit_prompt,
+    upload_vector_database,
+    add_vector_database,
 )
 
 
 def create_pipeline(**kwargs) -> Pipeline:
     return Pipeline(
         [
-            node(func=create_usecase_object, inputs=None, outputs="use_case"),
+            node(
+                func=create_usecase_object,
+                inputs=None,
+                outputs="use_case",
+                name="create_usecase_object",
+            ),
             node(
                 func=create_playground,
-                inputs=["use_case", "params:genai_api_root"],
+                inputs=["use_case"],
                 outputs="playground",
+                name="create_playground",
             ),
             node(
-                func=create_draft_blueprint,
-                inputs=[
-                    "playground",
-                    "params:genai_api_root",
-                    "params:pre_baked_llm_blueprint",
-                ],
-                outputs="pre_baked_llm_blueprint",
+                func=upload_vector_database,
+                inputs=["vector_database_raw"],
+                outputs="vector_database_dataset",
+                name="upload_vector_database",
             ),
             node(
-                func=submit_prompt,
-                inputs=[
-                    "pre_baked_llm_blueprint",
-                    "params:genai_api_root",
-                    "params:prompt_text",
-                ],
-                outputs="pre_baked_response",
+                func=add_vector_database,
+                inputs=["vector_database_dataset", "use_case"],
+                outputs="vector_database",
+                name="add_vector_database",
             ),
         ]
     )

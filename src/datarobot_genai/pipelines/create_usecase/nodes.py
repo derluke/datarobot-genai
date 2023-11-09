@@ -1,8 +1,18 @@
 # pyright: reportPrivateImportUsage=false
-from typing import Any
-import datarobot as dr
-import time
 import logging
+import tempfile
+import time
+
+import datarobot as dr
+from datarobot._experimental.models.enums import (
+    VectorDatabaseChunkingMethod,
+    VectorDatabaseEmbeddingModel,
+)
+from datarobot._experimental.models.genai.playground import Playground
+from datarobot._experimental.models.genai.vector_database import (
+    ChunkingParameters,
+    VectorDatabase,
+)
 
 log = logging.getLogger(__name__)
 
@@ -12,70 +22,40 @@ def create_usecase_object() -> dr.UseCase:
     return use_case
 
 
-def create_playground(use_case: dr.UseCase, genai_api_root) -> dict:
-    playground_payload = {
-        "name": "BYO LLM Playground",
-        "description": "This is a playground created using the REST API",
-        "useCaseId": use_case.id,
-    }
-
-    client = dr.client.get_client()
-    response = client.post(f"{genai_api_root}/playgrounds/", json=playground_payload)
-    playground = response.json()
+def create_playground(use_case: dr.UseCase) -> Playground:
+    playground = Playground.create(
+        name="BYO LLM Playground",
+        description="This is a playground created using the datarobot_early_access and kedro",
+        use_case=use_case,
+    )
     return playground
 
 
-def create_draft_blueprint(
-    playground: dict, genai_api_root: str, llm_blueprint_params: dict[str, Any]
-) -> dict:
-    # Create a draft LLM blueprint.
-    llm_blueprint_name = llm_blueprint_params.get("name", "Draft LLM Blueprint")
-    llm_blueprint_llmid = llm_blueprint_params.get(
-        "llmId", "azure-openai-gpt-3.5-turbo"
+def upload_vector_database(vector_db_zip: bytes) -> dr.Dataset:
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        file_name = f"{tmpdirname}/vdb.zip"
+        with open(file_name, "wb") as f:
+            f.write(vector_db_zip)
+        vector_database = dr.Dataset.create_from_file(file_name)
+    return vector_database
+
+
+def add_vector_database(
+    vector_database_dataset: dr.Dataset, use_case: dr.UseCase
+) -> VectorDatabase:
+
+    chunking_parameters = ChunkingParameters(
+        embedding_model=VectorDatabaseEmbeddingModel.JINA_EMBEDDING_T_EN_V1,
+        chunking_method=VectorDatabaseChunkingMethod.RECURSIVE,
+        chunk_size=512,
+        chunk_overlap_percentage=10,
+        separators=[],
     )
-    llm_blueprint_payload = {
-        "name": llm_blueprint_name,
-        "playgroundId": playground["id"],
-        "llmId": llm_blueprint_llmid,
-        # Uncomment this if you'd like to use a vector database
-        # "vectorDatabaseId": "abcdef0123456789",
-    }
-    client = dr.client.get_client()
-    response = client.post(
-        f"{genai_api_root}/llmBlueprints/", json=llm_blueprint_payload
+    vdb = VectorDatabase.create(
+        vector_database_dataset.id, chunking_parameters, use_case
     )
-    llm_blueprint = response.json()
-    return llm_blueprint
 
-
-def submit_prompt(llm_blueprint: dict, genai_api_root: str, prompt_text: str) -> str:
-    # Submit a prompt
-    prompt_payload = {
-        "llmBlueprintId": llm_blueprint["id"],
-        "text": prompt_text,
-    }
-
-    client = dr.client.get_client()
-
-    response = client.post(f"{genai_api_root}/chatPrompts/", json=prompt_payload)
-
-    prompt_status_tracking_url = response.headers["Location"]
-    prompt = response.json()
-    # prompt
-
-    for _ in range(60):
-        prompt_status_response = client.get(
-            prompt_status_tracking_url, allow_redirects=False
-        )
-        if prompt_status_response.status_code == 303:
-            log.info("Prompt completed successfully")
-            break
-        else:
-            log.info("Waiting for the prompt to complete...")
-            time.sleep(1)
-    # Get prompt output.
-    response = client.get(f"{genai_api_root}/chatPrompts/{prompt['id']}/")
-    completed_prompt = response.json()
-    log.info(f"Prompt output: {completed_prompt['resultText']}")
-
-    return completed_prompt["resultText"]
+    while vdb.execution_status != "COMPLETED":
+        vdb = VectorDatabase.get(vdb.id)
+        time.sleep(5)
+    return vdb
