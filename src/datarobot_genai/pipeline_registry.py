@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from kedro.framework.project import find_pipelines
 from kedro.pipeline import Pipeline
+from kedro.pipeline.modular_pipeline import pipeline
 
 
 def register_pipelines() -> dict[str, Pipeline]:
@@ -12,5 +13,7 @@ def register_pipelines() -> dict[str, Pipeline]:
         A mapping from pipeline names to ``Pipeline`` objects.
     """
     pipelines = find_pipelines()
-    pipelines["__default__"] = sum(pipelines.values(), Pipeline([]))
+    pipelines["__default__"] = pipeline(
+        sum(pipelines.values(), Pipeline([])), namespace=""
+    )
     return pipelines

@@ -4,6 +4,7 @@ generated using Kedro 0.18.14
 """
 
 from kedro.pipeline import Pipeline, node
+from kedro.pipeline.modular_pipeline import pipeline
 from .nodes import (
     create_usecase_object,
     create_playground,
@@ -13,7 +14,7 @@ from .nodes import (
 
 
 def create_pipeline() -> Pipeline:
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=create_usecase_object,
@@ -39,5 +40,8 @@ def create_pipeline() -> Pipeline:
                 outputs="vector_database",
                 name="add_vector_database",
             ),
-        ]
+        ],
+        namespace="create_usecase",
+        inputs={"vector_database_raw"},
+        outputs={"playground", "vector_database"},
     )
