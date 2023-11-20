@@ -42,7 +42,6 @@ def deploy_custom_llm(custom_py: str, credentials_set: bool) -> drx.Deployment:
     if not credentials_set:
         raise RuntimeError("Cohere credentials not set")
     cwd = os.getcwd()
-
     with tempfile.TemporaryDirectory() as tmpdirname:
         with open(f"{tmpdirname}/custom.py", "wt", encoding="utf-8") as f:
             f.write(custom_py)

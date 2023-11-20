@@ -1,5 +1,6 @@
 from kedro.io import AbstractDataset
 from typing import Any
+import os
 
 
 class AnyFileDataset(AbstractDataset):
@@ -16,3 +17,6 @@ class AnyFileDataset(AbstractDataset):
 
     def _describe(self) -> dict[str, Any]:
         return dict(filepath=self._filepath)
+
+    def _exists(self) -> bool:
+        return os.path.isfile(self._filepath)

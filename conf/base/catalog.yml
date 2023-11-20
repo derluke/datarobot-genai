@@ -11,7 +11,7 @@ vector_database_raw:
   type: datarobot_genai.extras.datasets.file_dataset.AnyFileDataset
   filepath: data/01_raw/datarobot_english_documentation.zip
 
-vector_database_dataset:
+create_usecase.vector_database_dataset:
   type: pickle.PickleDataset
   filepath: data/02_intermediate/vector_database_dataset.pkl
 
@@ -19,11 +19,11 @@ vector_database:
   type: pickle.PickleDataset
   filepath: data/02_intermediate/vector_database.pkl
 
-vector_database_settings:
+add_llm_to_usecase.vector_database_settings:
   type: pickle.PickleDataset
   filepath: data/02_intermediate/vector_database_settings.pkl
 
-use_case:
+create_usecase.use_case:
   type: pickle.PickleDataset
   filepath: data/02_intermediate/use_case.pkl
 
@@ -35,9 +35,9 @@ custom_py:
   type: text.TextDataset
   filepath: data/01_raw/byo_llm_files/custom.py
 
-"{llm_name}_deployment":
+"byo_llm_deployment.{llm_name}_deployment":
   type: pickle.PickleDataset
-  filepath: "data/02_intermediate/{llm_name}_deployment.pkl"
+  filepath: "data/02_intermediate/byo_llm_deployment.{llm_name}_deployment.pkl"
 
 "{llm_name}_response":
   type: text.TextDataset
@@ -50,3 +50,7 @@ custom_py:
 custom_model_validation:
   type: pickle.PickleDataset
   filepath: data/02_intermediate/custom_model_validation.pkl
+
+byo_llm_deployment.credentials_set:
+  type: yaml.YAMLDataSet
+  filepath: data/02_intermediate/byo_llm_deployment.credentials_set.yml

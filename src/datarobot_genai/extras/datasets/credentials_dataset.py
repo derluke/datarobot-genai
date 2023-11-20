@@ -14,3 +14,6 @@ class CredentialsDataset(AbstractDataSet):
 
     def _describe(self) -> dict[str, Any]:
         return dict()
+
+    def _exists(self) -> bool:
+        return True

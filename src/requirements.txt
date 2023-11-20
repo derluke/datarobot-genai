@@ -13,12 +13,13 @@ pytest-cov~=3.0
 pytest-mock>=1.7.1, <2.0
 pytest~=7.2
 numpy~=1.26.0
-datarobot_early_access==3.3.0.2023.10.24
 pandas<=2.0.3
 matplotlib~=3.7.2
 kedro-datasets[pickle.PickleDataset]~=1.8.0
 kedro-viz~=6.6.1
 datarobotx[deploy]~=0.1.19
+datarobot_early_access==3.3.0.2023.10.24
+
 seaborn~=0.13.0
 # cohere==4.27
 # datarobot-drum==1.10.10
