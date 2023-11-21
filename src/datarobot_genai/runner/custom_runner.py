@@ -1,8 +1,8 @@
-from typing import Any, Dict, Optional
+import logging
+from typing import Any
+
 from kedro.io import DataCatalog
 from kedro.pipeline import Pipeline
-import logging
-
 from kedro.runner import SequentialRunner
 from pluggy import PluginManager
 
@@ -10,15 +10,7 @@ log = logging.getLogger(__name__)
 
 
 class RunOnlyMissingRunner(SequentialRunner):
-    def __init__(self, client_args: Dict[str, Any] = {}, is_async: bool = False):
-        """Instantiates the runner by creating a ``distributed.Client``.
-
-        Args:
-            client_args: Arguments to pass to the ``distributed.Client``
-                constructor.
-            is_async: If True, the node inputs and outputs are loaded and saved
-                asynchronously with threads. Defaults to False.
-        """
+    def __init__(self, is_async: bool = False):
         super().__init__(is_async=is_async)
 
     def _run(

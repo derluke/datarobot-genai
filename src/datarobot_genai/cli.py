@@ -29,7 +29,6 @@ from kedro.framework.cli.utils import (
 )
 from kedro.framework.session import KedroSession
 from kedro.utils import load_obj
-from kedro.runner import AbstractRunner
 
 
 @click.group(context_settings=CONTEXT_SETTINGS, name=__file__)
@@ -121,9 +120,7 @@ def run(
     if not only_missing:
         runner = load_obj(runner or "SequentialRunner", "kedro.runner")
     else:
-        runner = load_obj(
-            "datarobot_genai.runner.custom_runner.RunOnlyMissingRunner", "kedro.runner"
-        )
+        runner = load_obj("datarobot_genai.runner.RunOnlyMissingRunner", "kedro.runner")
 
     tag = _get_values_as_tuple(tag) if tag else tag
     node_names = _get_values_as_tuple(node_names) if node_names else node_names
