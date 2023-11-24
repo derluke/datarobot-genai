@@ -1,8 +1,8 @@
 from typing import Any
-from kedro.io import AbstractDataSet
+from kedro.io import AbstractDataset
 
 
-class CredentialsDataset(AbstractDataSet):
+class CredentialsDataset(AbstractDataset):
     def __init__(self, credentials: dict[str, Any]) -> None:
         self.credentials = credentials
 

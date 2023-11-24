@@ -52,5 +52,5 @@ custom_model_validation:
   filepath: data/02_intermediate/custom_model_validation.pkl
 
 byo_llm_deployment.credentials_set:
-  type: yaml.YAMLDataSet
+  type: yaml.YAMLDataset
   filepath: data/02_intermediate/byo_llm_deployment.credentials_set.yml
